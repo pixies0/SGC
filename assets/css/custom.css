@@ -1,0 +1,37 @@
+/* custom.css */
+body {
+    font-family: 'Nunito', sans-serif;
+}
+
+.sidebar .nav-item .nav-link {
+    padding: 0.75rem 1rem;
+}
+
+.sidebar .nav-item .nav-link i {
+    font-size: 0.85rem;
+    margin-right: 0.25rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Ajustes para os badges de renda */
+.badge-renda {
+    font-size: 0.85em;
+    padding: 0.35em 0.65em;
+    border-radius: 0.25rem;
+}
+
+.badge-renda.badge-danger {
+    background-color: #e74a3b;
+}
+
+.badge-renda.badge-warning {
+    background-color: #f6c23e;
+    color: #1f1d1d;
+}
+
+.badge-renda.badge-success {
+    background-color: #1cc88a;
+}
