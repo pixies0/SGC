@@ -186,4 +186,63 @@ class ClienteRepository
             new DateTime($dados['data_cadastro'])
         );
     }
+
+    public function contarTotalClientes(): int
+    {
+        $stmt = $this->db->query("SELECT COUNT(*) FROM clientes");
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function contarClientesPorClasse(int $classe): int
+    {
+        $sql = "SELECT COUNT(*) FROM clientes WHERE ";
+
+        switch ($classe) {
+            case Cliente::CLASSE_A:
+                $sql .= "renda_familiar <= " . Cliente::LIMITE_CLASSE_A;
+                break;
+            case Cliente::CLASSE_B:
+                $sql .= "renda_familiar > " . Cliente::LIMITE_CLASSE_A .
+                    " AND renda_familiar <= " . Cliente::LIMITE_CLASSE_B;
+                break;
+            case Cliente::CLASSE_C:
+                $sql .= "renda_familiar > " . Cliente::LIMITE_CLASSE_B;
+                break;
+            default:
+                $sql .= "renda_familiar IS NULL";
+        }
+
+        $stmt = $this->db->query($sql);
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function calcularMediaRenda(): float
+    {
+        $sql = "SELECT AVG(renda_familiar) FROM clientes WHERE renda_familiar IS NOT NULL";
+        $stmt = $this->db->query($sql);
+        return round((float) $stmt->fetchColumn(), 2);
+    }
+
+    public function calcularMediaIdade(): float
+    {
+        $sql = "SELECT AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, data_nascimento))) FROM clientes";
+        $stmt = $this->db->query($sql);
+        return round((float) $stmt->fetchColumn(), 1);
+    }
+
+    public function contarClientesMaior18ComRendaAcimaDaMedia(): int
+    {
+        // Primeiro obtém a média
+        $mediaRenda = $this->calcularMediaRenda();
+
+        // Conta maiores de idade com renda acima da média
+        $sql = "SELECT COUNT(*)
+            FROM clientes
+            WHERE EXTRACT(YEAR FROM AGE(CURRENT_DATE, data_nascimento)) >= 18
+              AND renda_familiar > :media_renda";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':media_renda', $mediaRenda);
+        $stmt->execute();
+        return (int) $stmt->fetchColumn();
+    }
 }
