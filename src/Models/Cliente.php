@@ -119,19 +119,28 @@ class Cliente
         $this->rendaFamiliar = $rendaFamiliar;
     }
 
-    public function getClassificacaoRenda(): ?int
+    public function getClasseRenda(): string
     {
         if ($this->rendaFamiliar === null) {
-            return null;
+            return '';
         }
 
         if ($this->rendaFamiliar <= self::LIMITE_CLASSE_A) {
-            return self::CLASSE_A;
+            return 'badge-classe-a';
         } elseif ($this->rendaFamiliar <= self::LIMITE_CLASSE_B) {
-            return self::CLASSE_B;
+            return 'badge-classe-b';
         } else {
-            return self::CLASSE_C;
+            return 'badge-classe-c';
         }
+    }
+
+    public function getRendaFormatada(): string
+    {
+        if ($this->rendaFamiliar === null) {
+            return '-';
+        }
+
+        return number_format($this->rendaFamiliar, 2, ',', '.');
     }
 
     public function isMaiorDeIdade(): bool

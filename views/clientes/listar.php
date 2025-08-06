@@ -1,6 +1,6 @@
 <?php if (!empty($_GET['erro'])): ?>
     <div class="alert alert-danger alert-dismissible fade show">
-        <?= htmlspecialchars($_GET['erro']) ?>
+        <?php echo htmlspecialchars($_GET['erro']) ?>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -9,7 +9,7 @@
 
 <?php if (!empty($_GET['sucesso'])): ?>
     <div class="alert alert-success alert-dismissible fade show">
-        <?= htmlspecialchars($_GET['sucesso']) ?>
+        <?php echo htmlspecialchars($_GET['sucesso']) ?>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -31,7 +31,8 @@
                     <form method="GET" action="/clientes" class="mr-3">
                         <div class="input-group">
                             <input type="text" name="busca" class="form-control form-control-sm"
-                                placeholder="Pesquisar por nome..." value="<?= htmlspecialchars($_GET['busca'] ?? '') ?>">
+                                placeholder="Pesquisar por nome..."
+                                value="<?php echo htmlspecialchars($_GET['busca'] ?? '') ?>">
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary btn-sm" type="submit">
                                     <i class="fas fa-search"></i>
@@ -53,7 +54,7 @@
                     <a href="/clientes" class="btn btn-outline-secondary btn-sm">
                         <i class="fas fa-times"></i> Limpar pesquisa
                     </a>
-                    Mostrando resultados para: <strong><?= htmlspecialchars($_GET['busca']) ?></strong>
+                    Mostrando resultados para: <strong><?php echo htmlspecialchars($_GET['busca']) ?></strong>
                 </div>
             <?php endif; ?>
             <div class="table-responsive">
@@ -73,26 +74,41 @@
                     <tbody>
                         <?php foreach ($clientes as $cliente): ?>
                             <tr>
-                                <td><?= htmlspecialchars($cliente->getNome()) ?></td>
-                                <td>
-                                    <?= $cliente->getRendaFamiliar() !== null
-                                        ? 'R$ ' . number_format($cliente->getRendaFamiliar(), 2, ',', '.')
-                                        : '-' ?>
+                                <td><?php echo htmlspecialchars($cliente->getNome()) ?></td>
+                                <td style="vertical-align: middle; text-align: center;">
+                                    <?php if ($cliente->getRendaFamiliar() !== null): ?>
+                                        <?php
+                                        $renda = $cliente->getRendaFamiliar();
+                                        $classe = $cliente->getClasseRenda();
+                                        $styles = [
+                                            'badge-classe-a' => 'background-color: #dc3545; color: white;',
+                                            'badge-classe-b' => 'background-color: #ffc107; color: #212529;',
+                                            'badge-classe-c' => 'background-color: #28a745; color: white;'
+                                        ];
+                                        ?>
+                                        <span class="renda-badge" style="display: inline-block;
+                                            padding: 0.4em 0.7em;
+                                            border-radius: 0.5rem;
+                                            font-weight: bold;
+                                            min-width: 90px;
+                                            <?= $styles[$classe] ?? '' ?>">
+                                            R$ <?= number_format($renda, 2, ',', '.') ?>
+                                        </span>
+                                    <?php else: ?>
+                                        -
+                                    <?php endif; ?>
                                 </td>
-                                <td class="text-center p-1">
+                                <td style="vertical-align: middle; text-align: center;">
                                     <div class="action-buttons">
-
                                         <!-- Botão Editar -->
-                                        <a href="/clientes/editar/<?= $cliente->getId() ?>"
-                                            class="btn btn-sm btn-secondary py-1 px-2"
-                                            title="Editar">
+                                        <a href="/clientes/editar/<?php echo $cliente->getId() ?>"
+                                            class="btn btn-sm btn-secondary py-1 px-2" title="Editar">
                                             <i class="fas fa-edit fa-sm"></i>
                                         </a>
 
                                         <!-- Botão Deletar -->
-                                        <a href="/clientes/deletar/<?= $cliente->getId() ?>"
-                                            class="btn btn-sm btn-danger py-1 px-2"
-                                            title="Excluir"
+                                        <a href="/clientes/deletar/<?php echo $cliente->getId() ?>"
+                                            class="btn btn-sm btn-danger py-1 px-2" title="Excluir"
                                             onclick="return confirm('Tem certeza que deseja excluir este cliente?');">
                                             <i class="fas fa-trash-alt fa-sm"></i>
                                         </a>
