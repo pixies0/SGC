@@ -16,7 +16,7 @@
     <li class="nav-item active">
         <a class="nav-link" href="/">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
+            <span>Início</span></a>
     </li>
 
     <!-- Divider -->
@@ -44,7 +44,7 @@
 
     <!-- Nav Item - Relatórios -->
     <li class="nav-item">
-        <a class="nav-link" href="/">
+        <a class="nav-link" href="/dashboard">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Relatórios</span></a>
     </li>
