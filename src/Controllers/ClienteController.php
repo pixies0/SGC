@@ -23,7 +23,8 @@ class ClienteController
     public function index()
     {
         try {
-            $clientes = $this->repository->listarTodos();
+            $termoBusca = $_GET['busca'] ?? null;
+            $clientes = $this->repository->listarTodos($termoBusca);
 
             $view = BASE_PATH . '/views/clientes/listar.php';
             $layout = BASE_PATH . '/views/layout.php';

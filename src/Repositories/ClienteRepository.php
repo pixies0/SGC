@@ -98,14 +98,23 @@ class ClienteRepository
         return $this->mapearParaObjeto($dados);
     }
 
-    public function listarTodos(): array
+    public function listarTodos(?string $termoBusca = null): array
     {
         try {
-            $stmt = $this->db->query("
-                SELECT id, nome, cpf, data_nascimento, data_cadastro, renda_familiar
-                FROM clientes
-                ORDER BY nome
-            ");
+            $sql = "SELECT id, nome, cpf, data_nascimento, data_cadastro, renda_familiar
+                FROM clientes";
+
+            $params = [];
+
+            if ($termoBusca) {
+                $sql .= " WHERE nome ILIKE :termo";
+                $params[':termo'] = '%' . $termoBusca . '%';
+            }
+
+            $sql .= " ORDER BY nome";
+
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
 
             $clientes = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

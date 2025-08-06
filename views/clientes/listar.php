@@ -24,14 +24,38 @@
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-secondary">Clientes Cadastrados</h6>
-                <a href="/clientes/cadastrar" class="btn btn-secondary btn-sm">
-                    <i class="fas fa-plus"></i> Novo Cliente
-                </a>
+                <div class="d-flex">
+                    <!-- Campo de pesquisa -->
+                    <form method="GET" action="/clientes" class="mr-3">
+                        <div class="input-group">
+                            <input type="text" name="busca" class="form-control form-control-sm"
+                                placeholder="Pesquisar por nome..." value="<?= htmlspecialchars($_GET['busca'] ?? '') ?>">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary btn-sm" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Botão Novo Cliente -->
+                    <a href="/clientes/cadastrar" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-plus"></i> Novo Cliente
+                    </a>
+                </div>
             </div>
         </div>
         <div class="card-body">
+            <?php if (!empty($_GET['busca'])): ?>
+                <div class="mb-3">
+                    <a href="/clientes" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-times"></i> Limpar pesquisa
+                    </a>
+                    Mostrando resultados para: <strong><?= htmlspecialchars($_GET['busca']) ?></strong>
+                </div>
+            <?php endif; ?>
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <colgroup>
@@ -56,7 +80,8 @@
                                         : '-' ?>
                                 </td>
                                 <td class="text-center p-1">
-                                    <div class="action-buttons"> <!-- Aumentei o gap para 2 -->
+                                    <div class="action-buttons">
+
                                         <!-- Botão Editar -->
                                         <a href="/clientes/editar/<?= $cliente->getId() ?>"
                                             class="btn btn-sm btn-secondary py-1 px-2"
