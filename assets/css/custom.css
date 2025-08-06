@@ -16,6 +16,21 @@ body {
     overflow-x: auto;
 }
 
+/* Garante espaçamento mesmo com Bootstrap antigo */
+.action-buttons {
+    display: inline-flex;
+}
+
+.action-buttons a,
+.action-buttons button {
+    margin-right: 8px !important;
+}
+
+.action-buttons a:last-child,
+.action-buttons button:last-child {
+    margin-right: 0 !important;
+}
+
 /* Ajustes para os badges de renda */
 .badge-renda {
     font-size: 0.85em;

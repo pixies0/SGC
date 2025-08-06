@@ -1,10 +1,10 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
+    <a class="sidebar-brand d-flex align-items-center justify-content-center">
+        <div class="sidebar-brand-icon">
+            <i class="fas fa-user-secret"></i>
         </div>
         <div class="sidebar-brand-text mx-3">SGC</div>
     </a>
@@ -14,7 +14,7 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="index.php">
+        <a class="nav-link" href="/">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
@@ -29,7 +29,7 @@
 
     <!-- Nav Item - Clientes -->
     <li class="nav-item">
-        <a class="nav-link" href="clientes.php">
+        <a class="nav-link" href="/clientes">
             <i class="fas fa-fw fa-users"></i>
             <span>Clientes</span></a>
     </li>
@@ -44,7 +44,7 @@
 
     <!-- Nav Item - Relatórios -->
     <li class="nav-item">
-        <a class="nav-link" href="relatorios.php">
+        <a class="nav-link" href="/">
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Relatórios</span></a>
     </li>
