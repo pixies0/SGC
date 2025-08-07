@@ -2,6 +2,7 @@
 define('BASE_PATH', dirname(__DIR__));
 require __DIR__ . '/autoload.php';
 
+use App\Helper\View;
 use App\Config\Database;
 use App\Repositories\ClienteRepository;
 use App\Controllers\ClienteController;
@@ -51,13 +52,8 @@ try {
             break;
 
         default:
-            // Rota não encontrada
             http_response_code(404);
-            if (file_exists(BASE_PATH . '/views/errors/404.php')) {
-                require BASE_PATH . '/views/errors/404.php';
-            } else {
-                die('Página não encontrada');
-            }
+            View::render('404.php');
             break;
     }
 } catch (Exception $e) {

@@ -49,6 +49,19 @@
             <span>Relatórios</span></a>
     </li>
 
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Tesouro
+    </div>
+
+    <li class="nav-item">
+        <a class="nav-link" href="/naotem">
+            <i class="fas fa-key"></i>
+            <span>Segredo</span></a>
+    </li>
+
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
