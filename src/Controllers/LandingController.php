@@ -2,17 +2,12 @@
 
 namespace App\Controllers;
 
+use App\Helper\View;
+
 class LandingController
 {
     public function index()
     {
-        $view = BASE_PATH . '/views/landing/index.php';
-        $layout = BASE_PATH . '/views/layout.php';
-
-        if (file_exists($view)) {
-            require $layout;
-        } else {
-            die("View não encontrada: " . $view);
-        }
+        View::render('landing/index.php');
     }
 }

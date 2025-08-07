@@ -3,8 +3,9 @@
 namespace App\Controllers;
 
 use Exception;
-use App\Models\Cliente;  // Adicione esta linha para importar a classe Cliente
+use App\Models\Cliente;
 use App\Repositories\ClienteRepository;
+use App\Helper\View;
 
 class DashboardController
 {
@@ -30,14 +31,7 @@ class DashboardController
                 'maior18_acima_media' => $this->repository->contarClientesMaior18ComRendaAcimaDaMedia($periodo)
             ];
 
-            $view = BASE_PATH . '/views/dashboard/index.php';
-            $layout = BASE_PATH . '/views/layout.php';
-
-            if (file_exists($view)) {
-                require $layout;
-            } else {
-                die("View não encontrada no caminho: " . $view);
-            }
+            View::render('dashboard/index.php', ['dashboardData' => $dashboardData]);
         } catch (Exception $e) {
             error_log('Erro no dashboard: ' . $e->getMessage());
             header('Location: /?erro=Erro+ao+carregar+dashboard');

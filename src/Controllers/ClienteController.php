@@ -9,6 +9,7 @@ use Exception;
 
 use App\Models\Cliente;
 use App\Repositories\ClienteRepository;
+use App\Helper\View;
 
 
 class ClienteController
@@ -26,14 +27,7 @@ class ClienteController
             $termoBusca = $_GET['busca'] ?? null;
             $clientes = $this->repository->listarTodos($termoBusca);
 
-            $view = BASE_PATH . '/views/clientes/listar.php';
-            $layout = BASE_PATH . '/views/layout.php';
-
-            if (file_exists($view)) {
-                require $layout;
-            } else {
-                die("View não encontrada: " . $view);
-            }
+            View::render('clientes/listar.php', ['clientes' => $clientes]);
         } catch (Exception $e) {
             error_log('Erro na listagem de clientes: ' . $e->getMessage());
             header('Location: /clientes?erro=Ocorreu+um+erro+ao+carregar+os+clientes');
@@ -43,14 +37,7 @@ class ClienteController
 
     public function cria()
     {
-        $view = BASE_PATH . '/views/clientes/cadastrar.php';
-        $layout = BASE_PATH . '/views/layout.php';
-
-        if (file_exists($view)) {
-            require $layout;
-        } else {
-            die("View não encontrada: " . $view);
-        }
+        View::render('clientes/cadastrar.php');
     }
 
     public function armazena(array $dados)
@@ -109,14 +96,9 @@ class ClienteController
             exit;
         }
 
-        $view = BASE_PATH . '/views/clientes/editar.php';
-        $layout = BASE_PATH . '/views/layout.php';
-
-        if (file_exists($view)) {
-            require $layout;
-        } else {
-            die("View não encontrada: " . $view);
-        }
+        View::render('clientes/editar.php', [
+            'cliente' => $cliente
+        ]);
     }
 
     public function atualiza(int $id, array $dados)
