@@ -13,4 +13,4 @@
     <link rel="stylesheet" href="/assets/css/custom.css">
 
 </head>
-<body id="page-top">
+<body id="page-top" class="sidebar-toggled">
