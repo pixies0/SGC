@@ -165,6 +165,7 @@ class ClienteRepository
         $stmt = $this->db->prepare("
             SELECT * FROM public.clientes WHERE cpf = :cpf
         ");
+
         $stmt->execute([':cpf' => $cpf]);
         $dados = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -187,16 +188,25 @@ class ClienteRepository
         );
     }
 
-    public function contarTotalClientes(): int
+    public function contarTotalClientes(string $periodo): int
     {
-        $stmt = $this->db->query("SELECT COUNT(*) FROM clientes");
+        [$inicio, $fim] = $this->gerarFiltroPeriodo($periodo);
+
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) FROM clientes
+        WHERE data_cadastro BETWEEN :inicio AND :fim
+        ");
+
+        $stmt->execute([':inicio' => $inicio, ':fim' => $fim]);
         return (int) $stmt->fetchColumn();
     }
 
-    public function contarClientesPorClasse(int $classe): int
-    {
-        $sql = "SELECT COUNT(*) FROM clientes WHERE ";
 
+    public function contarClientesPorClasse(int $classe, string $periodo): int
+    {
+        [$inicio, $fim] = $this->gerarFiltroPeriodo($periodo);
+
+        $sql = "SELECT COUNT(*) FROM clientes WHERE data_cadastro BETWEEN :inicio AND :fim AND ";
         switch ($classe) {
             case Cliente::CLASSE_A:
                 $sql .= "renda_familiar <= " . Cliente::LIMITE_CLASSE_A;
@@ -212,37 +222,88 @@ class ClienteRepository
                 $sql .= "renda_familiar IS NULL";
         }
 
-        $stmt = $this->db->query($sql);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':inicio' => $inicio, ':fim' => $fim]);
         return (int) $stmt->fetchColumn();
     }
 
-    public function calcularMediaRenda(): float
+
+    public function calcularMediaRenda(string $periodo): float
     {
-        $sql = "SELECT AVG(renda_familiar) FROM clientes WHERE renda_familiar IS NOT NULL";
-        $stmt = $this->db->query($sql);
+        [$inicio, $fim] = $this->gerarFiltroPeriodo($periodo);
+
+        $stmt = $this->db->prepare("
+        SELECT AVG(renda_familiar)
+        FROM clientes
+        WHERE renda_familiar IS NOT NULL AND data_cadastro BETWEEN :inicio AND :fim
+    ");
+        $stmt->execute([':inicio' => $inicio, ':fim' => $fim]);
+
         return round((float) $stmt->fetchColumn(), 2);
     }
 
-    public function calcularMediaIdade(): float
+
+    public function calcularMediaIdade(string $periodo): float
     {
-        $sql = "SELECT AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, data_nascimento))) FROM clientes";
-        $stmt = $this->db->query($sql);
+        [$inicio, $fim] = $this->gerarFiltroPeriodo($periodo);
+
+        $stmt = $this->db->prepare("
+        SELECT AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, data_nascimento)))
+        FROM clientes
+        WHERE data_cadastro BETWEEN :inicio AND :fim
+        ");
+
+        $stmt->execute([':inicio' => $inicio, ':fim' => $fim]);
+
         return round((float) $stmt->fetchColumn(), 1);
     }
 
-    public function contarClientesMaior18ComRendaAcimaDaMedia(): int
-    {
-        // Primeiro obtém a média
-        $mediaRenda = $this->calcularMediaRenda();
 
-        // Conta maiores de idade com renda acima da média
-        $sql = "SELECT COUNT(*)
-            FROM clientes
-            WHERE EXTRACT(YEAR FROM AGE(CURRENT_DATE, data_nascimento)) >= 18
-              AND renda_familiar > :media_renda";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':media_renda', $mediaRenda);
-        $stmt->execute();
+    public function contarClientesMaior18ComRendaAcimaDaMedia(string $periodo): int
+    {
+        [$inicio, $fim] = $this->gerarFiltroPeriodo($periodo);
+        $mediaRenda = $this->calcularMediaRenda($periodo);
+
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*)
+        FROM clientes
+        WHERE EXTRACT(YEAR FROM AGE(CURRENT_DATE, data_nascimento)) >= 18
+          AND renda_familiar > :media_renda
+          AND data_cadastro BETWEEN :inicio AND :fim
+        ");
+
+        $stmt->execute([
+            ':media_renda' => $mediaRenda,
+            ':inicio' => $inicio,
+            ':fim' => $fim
+        ]);
+
         return (int) $stmt->fetchColumn();
+    }
+
+
+    private function gerarFiltroPeriodo(string $periodo): array
+    {
+        $hoje = new DateTime();
+
+        switch ($periodo) {
+            case 'hoje':
+                $inicio = (clone $hoje)->setTime(0, 0, 0);
+                $fim = (clone $hoje)->setTime(23, 59, 59);
+                break;
+
+            case 'semana':
+                // Pega segunda-feira da semana atual
+                $inicio = (clone $hoje)->modify('monday this week')->setTime(0, 0, 0);
+                $fim = (clone $hoje)->modify('sunday this week')->setTime(23, 59, 59);
+                break;
+
+            case 'mes':
+            default:
+                $inicio = (new DateTime('first day of this month'))->setTime(0, 0, 0);
+                $fim = (clone $hoje)->setTime(23, 59, 59);
+        }
+
+        return [$inicio->format('Y-m-d'), $fim->format('Y-m-d')];
     }
 }

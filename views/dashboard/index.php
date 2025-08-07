@@ -25,8 +25,17 @@ if (!empty($_GET['erro'])): ?>
 
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Relatórios</h1>
-        <span class="text-muted"><?= date('F Y') ?></span>
+        <h1 class="h3 mb-0 text-gray-800">Relatórios
+        <small class="text-muted"><?= date('F Y') ?></small>
+        </h1>
+        <form method="GET" class="form-inline">
+            <label for="periodo" class="mr-2">Período:</label>
+            <select name="periodo" id="periodo" class="form-control" onchange="this.form.submit()">
+                <option value="mes" <?= ($_GET['periodo'] ?? 'mes') === 'mes' ? 'selected' : '' ?>>Mês</option>
+                <option value="semana" <?= ($_GET['periodo'] ?? '') === 'semana' ? 'selected' : '' ?>>Semana</option>
+                <option value="hoje" <?= ($_GET['periodo'] ?? '') === 'hoje' ? 'selected' : '' ?>>Hoje</option>
+            </select>
+        </form>
     </div>
 
     <div class="row">

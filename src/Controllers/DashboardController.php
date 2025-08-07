@@ -18,18 +18,18 @@ class DashboardController
     public function index()
     {
         try {
+            $periodo = $_GET['periodo'] ?? 'mes';
+
             $dashboardData = [
-                'total' => $this->repository->contarTotalClientes(),
-                'classe_a' => $this->repository->contarClientesPorClasse(Cliente::CLASSE_A),
-                'classe_b' => $this->repository->contarClientesPorClasse(Cliente::CLASSE_B),
-                'classe_c' => $this->repository->contarClientesPorClasse(Cliente::CLASSE_C),
-                'media_renda' => $this->repository->calcularMediaRenda(),
-                'media_idade' => $this->repository->calcularMediaIdade(),
-                'maior18_acima_media' => $this->repository->contarClientesMaior18ComRendaAcimaDaMedia()
+                'total' => $this->repository->contarTotalClientes($periodo),
+                'classe_a' => $this->repository->contarClientesPorClasse(Cliente::CLASSE_A, $periodo),
+                'classe_b' => $this->repository->contarClientesPorClasse(Cliente::CLASSE_B, $periodo),
+                'classe_c' => $this->repository->contarClientesPorClasse(Cliente::CLASSE_C, $periodo),
+                'media_renda' => $this->repository->calcularMediaRenda($periodo),
+                'media_idade' => $this->repository->calcularMediaIdade($periodo),
+                'maior18_acima_media' => $this->repository->contarClientesMaior18ComRendaAcimaDaMedia($periodo)
             ];
 
-
-            // Restante do código permanece igual
             $view = BASE_PATH . '/views/dashboard/index.php';
             $layout = BASE_PATH . '/views/layout.php';
 
