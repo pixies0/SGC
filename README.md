@@ -99,6 +99,4 @@ SGC/
 
 ![alt text](screenshot.png)
 
----
-
-i try my best!!
+i tried my best!!
