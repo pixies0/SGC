@@ -57,6 +57,17 @@ class Cliente
         return $this->dataNascimento;
     }
 
+    public function getIdade(): ?int
+    {
+        if (!$this->dataNascimento) {
+            return null;
+        }
+
+        $hoje = new DateTime();
+        return $this->dataNascimento->diff($hoje)->y;
+    }
+
+
     public function getDataCadastro(): DateTime
     {
         return $this->dataCadastro;

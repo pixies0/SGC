@@ -306,4 +306,112 @@ class ClienteRepository
 
         return [$inicio->format('Y-m-d'), $fim->format('Y-m-d')];
     }
+
+    public function listarTodosComFiltroPeriodo(string $periodo): array
+    {
+        [$inicio, $fim] = $this->gerarFiltroPeriodo($periodo);
+
+        $sql = "SELECT * FROM clientes
+            WHERE data_cadastro BETWEEN :inicio AND :fim
+            ORDER BY nome";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':inicio' => $inicio, ':fim' => $fim]);
+
+        $clientes = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            try {
+                $clientes[] = new Cliente(
+                    $row['nome'],
+                    $row['cpf'],
+                    new DateTime($row['data_nascimento']),
+                    $row['renda_familiar'],
+                    $row['id'],
+                    new DateTime($row['data_cadastro'])
+                );
+            } catch (Exception $e) {
+                error_log("Erro ao criar cliente ID {$row['id']}: " . $e->getMessage());
+                continue;
+            }
+        }
+
+        return $clientes;
+    }
+
+
+    public function calcularMediaRendaPorFaixaEtaria(string $periodo): array
+    {
+        $clientes = $this->listarTodosComFiltroPeriodo($periodo);
+
+        $faixas = [
+            '18-30' => [],
+            '31-45' => [],
+            '46+'   => []
+        ];
+
+        foreach ($clientes as $cliente) {
+            $idade = $cliente->getIdade();
+            $renda = $cliente->getRendaFamiliar();
+
+            if ($idade === null || $renda === null) {
+                continue;
+            }
+
+            if ($idade >= 18 && $idade <= 30) {
+                $faixas['18-30'][] = $renda;
+            } elseif ($idade >= 31 && $idade <= 45) {
+                $faixas['31-45'][] = $renda;
+            } elseif ($idade > 45) {
+                $faixas['46+'][] = $renda;
+            }
+        }
+
+        $medias = [];
+
+        foreach ($faixas as $faixa => $rendas) {
+            $medias[$faixa] = count($rendas) > 0
+                ? round(array_sum($rendas) / count($rendas), 2)
+                : 0;
+        }
+
+        return $medias;
+    }
+
+    public function contarClientesAcimaAbaixoMedia(string $periodo): array
+    {
+        $clientes = $this->listarTodosComFiltroPeriodo($periodo);
+
+        $rendas = array_filter(array_map(function ($c) {
+            return $c->getRendaFamiliar();
+        }, $clientes));
+
+        if (count($rendas) === 0) {
+            return ['acima' => 0, 'abaixo' => 0];
+        }
+
+        $media = array_sum($rendas) / count($rendas);
+
+        $acima = 0;
+        $abaixo = 0;
+
+        foreach ($clientes as $cliente) {
+            $renda = $cliente->getRendaFamiliar();
+
+            if ($renda === null) {
+                continue;
+            }
+
+            if ($renda > $media) {
+                $acima++;
+            } else {
+                $abaixo++;
+            }
+        }
+
+        return [
+            'acima' => $acima,
+            'abaixo' => $abaixo
+        ];
+    }
 }
