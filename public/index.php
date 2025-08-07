@@ -9,11 +9,9 @@ use App\Controllers\DashboardController;
 use App\Controllers\LandingController;
 
 try {
-    // Inicializa a aplicação
     $database = new Database();
     $db = $database->getConnection();
 
-    // Cria os repositórios e controllers
     $repository = new ClienteRepository($db);
     $clienteController = new ClienteController($repository);
     $dashboardController = new DashboardController($repository);

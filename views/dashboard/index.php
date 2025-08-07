@@ -1,5 +1,4 @@
 <?php
-// Verifica se há mensagens de erro/sucesso
 if (!empty($_GET['erro'])): ?>
     <div class="alert alert-danger alert-dismissible fade show">
         <?= htmlspecialchars($_GET['erro']) ?>

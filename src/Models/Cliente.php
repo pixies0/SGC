@@ -82,10 +82,8 @@ class Cliente
 
     public function setCpf(string $cpf): void
     {
-        // Remove qualquer formatação
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
 
-        // Verifica se tem 11 dígitos
         if (strlen($cpf) !== 11) {
             throw new Exception('CPF deve conter exatamente 11 dígitos');
         }
@@ -94,7 +92,6 @@ class Cliente
             throw new Exception('CPF deve conter apenas dígitos');
         }
 
-        // Validação do CPF
         if (!self::validarCPF($cpf)) {
             throw new Exception('CPF inválido');
         }
@@ -152,7 +149,6 @@ class Cliente
 
     public static function validarCPF($cpf)
     {
-        // Remove caracteres não numéricos
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
 
         // Verifica se tem 11 dígitos ou se é uma sequência repetida

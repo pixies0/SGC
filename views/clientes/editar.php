@@ -1,6 +1,5 @@
 <h1 class="h3 mb-4 text-gray-800">Editar Cliente</h1>
 
-<!-- Alertas de erro/sucesso -->
 <?php if (!empty($_GET['erro'])): ?>
     <div class="alert alert-danger alert-dismissible fade show">
         <?= htmlspecialchars($_GET['erro']) ?>
